@@ -4,61 +4,38 @@ public class MyLinkedList {
     private Node head;
     private Node tail;
 
-    public Node search(int value) {
-        Node node = head;
-        while (node.next != null) {
-            node = node.next;
-            if (node.value == value) {
-                return node;
-            }
-        }
-        return null;
-    }
-
     public void add(int value) {
-        Node node = new Node();
-        node.value = value;
-        if (head == null) {
-            addFirst(node);
-        }
-        else
-        {
-            tail.next = node;
-            node.prev = tail;
-            tail = node;
-//            tail.next = head;
-//            head.prev = tail;
+        Node newNode = new Node();
+        newNode.value = value;
+        if (head == null){
+            head = newNode;
+            tail = newNode;
+            newNode.prev = null;
+            newNode.next = null;
+        } else {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
         }
     }
 
-    private void addFirst(Node node) {
-        head = node;
-        tail = node;
-        node.next = node;
-//        node.prev = node;
-    }
-
-    public void insert(int value, Node prevNode) {
-        Node node = new Node();
-        node.value = value;
-        Node nextNode = prevNode.next;
-        prevNode.next = node;
-        node.prev = prevNode;
-        node.next = nextNode;
-        nextNode.prev = node;
-    }
 
     public void reverse() {
-        Node tmp = head;
-        head = tail;
-        tail = tmp;
         Node node = head;
+
         while (node.next != null) {
-            tmp = node.next;
+
+            Node temp = node.next;
             node.next = node.prev;
-            node.prev = tmp;
+            node.prev = temp;
             node = node.prev;
         }
+
+        Node temp = head;
+        head = tail;
+        tail = temp;
+        head.next = head.prev;
+
     }
 
     @Override
@@ -74,9 +51,11 @@ public class MyLinkedList {
     }
 
     public class Node {
-        private int value;
-        private Node next;
+        private Integer value;
         private Node prev;
+        private Node next;
 
+        @Override
+        public String toString(){ return value.toString(); }
     }
 }
