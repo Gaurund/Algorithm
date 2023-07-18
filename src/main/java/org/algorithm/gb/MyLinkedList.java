@@ -24,7 +24,6 @@ public class MyLinkedList {
         Node node = head;
 
         while (node.next != null) {
-
             Node temp = node.next;
             node.next = node.prev;
             node.prev = temp;
