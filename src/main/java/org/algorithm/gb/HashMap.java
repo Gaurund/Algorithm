@@ -33,9 +33,14 @@ public class HashMap<K, V> implements Iterable<HashMap<K, V>.Entity> {
 
         private Entity getNextElement(){
             changeIndex();
-            Bucket.Node node = buckets[index].head;
-            if (Objects.equals(lastReturned, (String) node.nodeValue.key)) {
-
+            if(lastReturned == null){
+                Bucket.Node node = buckets[index].head;
+                lastReturned = (String) node.nodeValue.key;
+                counter++;
+                return node.nodeValue;
+            }
+            else {
+                Bucket.Node node = buckets[index].getNode(lastReturned);
                 if (node.next == null) {
                     index++;
                     changeIndex();
@@ -43,11 +48,10 @@ public class HashMap<K, V> implements Iterable<HashMap<K, V>.Entity> {
                 } else {
                     node = node.next;
                 }
+                lastReturned = (String) node.nodeValue.key;
+                counter++;
+                return node.nodeValue;
             }
-
-            lastReturned = (String) node.nodeValue.key;
-            counter++;
-            return node.nodeValue;
         }
 
         private void changeIndex(){
