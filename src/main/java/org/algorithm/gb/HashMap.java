@@ -1,8 +1,9 @@
 package org.algorithm.gb;
 
 import java.util.Iterator;
+import java.util.Objects;
 
-public class HashMap<K, V> implements Iterable<E> {
+public class HashMap<K, V> implements Iterable<HashMap<K, V>.Entity> {
 
     private static final int INIT_BUCKET_COUNT = 16;
     private static final double LOAD_FACTOR = 0.5; //50%
@@ -11,17 +12,19 @@ public class HashMap<K, V> implements Iterable<E> {
     private Bucket[] buckets;
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<Entity> iterator() {
 
         return new BucketIterator();
     }
 
     public class BucketIterator implements Iterator<Entity>{
-        int cursor;
-        int lastReturned = -1;
+        int index;
+        int counter;
+        String cursor;
+        String lastReturned;
 
         public boolean hasNext(){
-            return cursor != size;
+            return counter != size;
         }
 
         public Entity next(){
@@ -29,13 +32,38 @@ public class HashMap<K, V> implements Iterable<E> {
         }
 
         private Entity getNextElement(){
-            return null;
+            changeIndex();
+            Bucket.Node node = buckets[index].head;
+            if (Objects.equals(lastReturned, (String) node.nodeValue.key)) {
+
+                if (node.next == null) {
+                    index++;
+                    changeIndex();
+                    node = buckets[index].head;
+                } else {
+                    node = node.next;
+                }
+            }
+
+            lastReturned = (String) node.nodeValue.key;
+            counter++;
+            return node.nodeValue;
         }
 
+        private void changeIndex(){
+            while (buckets[index] == null){
+                index++;
+            }
+        }
     }
     class Entity {
         K key;
         V value;
+
+        @Override
+        public String toString() {
+            return key + " " + value;
+        }
     }
 
     class Bucket<K, V> {
@@ -71,7 +99,17 @@ public class HashMap<K, V> implements Iterable<E> {
                 }
             }
         }
-
+        public Node getNode(K key)
+        {
+            Node node = head;
+            while (node != null) {
+                if (node.nodeValue.key.equals(key)) {
+                    return node;
+                }
+                node = node.next;
+            }
+            return null;
+        }
         public V get(K key) {
             Node node = head;
             while (node != null) {
